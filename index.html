@@ -519,7 +519,9 @@ function startLogListener() {
       snapshot.forEach(d => { log[d.id] = d.data(); });
       syncDot.classList.remove("offline");
       syncText.textContent = "동기화됨";
-      renderLogForm();
+      // 입력 중인 칸이 있으면 다시 그리지 않음 (다른 항목 타이핑 중에 값이 사라지는 것 방지)
+      const isEditingLog = logExerciseList.contains(document.activeElement);
+      if (!isEditingLog) renderLogForm();
       if (panels.week.style.display !== "none") renderWeek();
       if (panels.month.style.display !== "none") renderMonth();
     },
@@ -585,8 +587,30 @@ function renderLogForm() {
   });
   logExerciseList.querySelectorAll("input[data-key]").forEach(inp => {
     inp.addEventListener("input", () => updateLivePercents(routine));
+    inp.addEventListener("change", () => autoSaveField(dateStr, inp.dataset.key, inp.value, ex_name_of(routine, inp.dataset.key)));
   });
   updateLivePercents(routine);
+}
+
+function ex_name_of(routine, key) {
+  const ex = routine.exercises.find(e => e.key === key);
+  return ex ? ex.name : key;
+}
+
+// 입력칸에서 포커스가 빠질 때(값이 바뀐 경우) 그 항목만 즉시 Firestore에 저장.
+// "저장하기" 버튼을 누르는 걸 잊어도 이미 입력한 값은 사라지지 않도록 하기 위함.
+async function autoSaveField(dateStr, key, rawValue, exName) {
+  const value = Number(rawValue) || 0;
+  if (!log[dateStr]) log[dateStr] = {};
+  if (log[dateStr][key] === value) return; // 값이 그대로면 저장 생략
+  try {
+    await setDoc(doc(db, LOGS_COLLECTION, dateStr), { [key]: value }, { merge: true });
+    log[dateStr][key] = value;
+    showToast(`${exName} ${value} 자동 저장됨`);
+  } catch (e) {
+    showToast("자동 저장 실패: 인터넷 연결을 확인하세요");
+    console.error(e);
+  }
 }
 
 function updateLivePercents(routine) {
