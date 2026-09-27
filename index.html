@@ -9,9 +9,6 @@
     --primary: #4f46e5;
     --primary-light: #eef2ff;
     --green: #16a34a;
-    --lime: #84cc16;
-    --amber: #f59e0b;
-    --red: #ef4444;
     --gray: #e5e7eb;
     --text: #1f2937;
     --text-light: #6b7280;
@@ -26,128 +23,50 @@
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", Roboto, sans-serif;
   }
-  .container { max-width: 640px; margin: 0 auto; }
+  .container { max-width: 720px; margin: 0 auto; }
   h1 { font-size: 19px; margin: 0 0 4px; }
   .subtitle { color: var(--text-light); font-size: 13px; margin-bottom: 16px; }
 
+  /* ---------- 아이콘 ---------- */
+  .ico { display: inline-flex; width: 1.2em; height: 1.2em; align-items: center; justify-content: center; vertical-align: -0.2em; line-height: 1; }
+  .ico svg { width: 100%; height: 100%; }
+
   /* ---------- 로그인 화면 ---------- */
-  #login-screen {
-    max-width: 360px;
-    margin: 80px auto;
-    text-align: center;
-  }
+  #login-screen { max-width: 360px; margin: 80px auto; text-align: center; }
   #login-screen h1 { font-size: 22px; margin-bottom: 6px; }
   #login-screen p { color: var(--text-light); font-size: 13px; margin-bottom: 24px; }
-  .login-card {
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 24px;
-    text-align: left;
-  }
+  .login-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 24px; text-align: left; }
   .login-card label { font-size: 12px; font-weight: 600; color: var(--text-light); display: block; margin-bottom: 5px; }
-  .login-card input {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 14px;
-    margin-bottom: 14px;
-  }
-  .login-card button {
-    width: 100%;
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 11px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-  }
-  #login-error { color: var(--red); font-size: 12px; margin-top: 10px; min-height: 16px; }
+  .login-card input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; margin-bottom: 14px; }
+  .login-card button { width: 100%; background: var(--primary); color: #fff; border: none; border-radius: 8px; padding: 11px; font-size: 14px; font-weight: 700; cursor: pointer; }
+  #login-error { color: #ef4444; font-size: 12px; margin-top: 10px; min-height: 16px; }
   #login-loading { color: var(--text-light); font-size: 12px; margin-top: 10px; }
 
   /* ---------- 메인 앱 ---------- */
   #app { display: none; }
-
   .top-bar { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
   .sync-status { font-size: 11px; color: var(--text-light); display: flex; align-items: center; gap: 5px; }
   .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
-  .sync-dot.offline { background: var(--red); }
+  .sync-dot.offline { background: #ef4444; }
   .logout-btn { background: none; border: none; color: var(--text-light); font-size: 12px; cursor: pointer; text-decoration: underline; padding: 0; }
 
-  .tabs {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 16px;
-    background: #fff;
-    padding: 5px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-  }
-  .tab-btn {
-    flex: 1;
-    border: none;
-    background: transparent;
-    padding: 9px 8px;
-    border-radius: 7px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-light);
-    cursor: pointer;
-  }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; background: #fff; padding: 5px; border-radius: 10px; border: 1px solid var(--border); }
+  .tab-btn { flex: 1; border: none; background: transparent; padding: 9px 8px; border-radius: 7px; font-size: 13px; font-weight: 600; color: var(--text-light); cursor: pointer; }
   .tab-btn.active { background: var(--primary); color: #fff; }
 
-  .card {
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px;
-    margin-bottom: 14px;
-  }
+  .card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 14px; }
   .card h2 { font-size: 14px; margin: 0 0 14px; }
+  .card-note { font-size: 11px; color: var(--text-light); margin-top: 8px; }
 
   .row { display: flex; align-items: center; gap: 10px; }
   .row.between { justify-content: space-between; }
-  .nav-btn {
-    border: 1px solid var(--border);
-    background: #fff;
-    border-radius: 8px;
-    width: 32px; height: 32px;
-    font-size: 15px;
-    cursor: pointer;
-    color: var(--text);
-    flex-shrink: 0;
-  }
-  .today-btn {
-    border: 1px solid var(--primary);
-    color: var(--primary);
-    background: #fff;
-    border-radius: 8px;
-    padding: 6px 12px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .range-label { font-weight: 700; font-size: 14px; text-align: center; flex: 1; }
+  .nav-btn { border: 1px solid var(--border); background: #fff; border-radius: 8px; width: 32px; height: 32px; font-size: 15px; cursor: pointer; color: var(--text); flex-shrink: 0; }
+  .today-btn { border: 1px solid var(--primary); color: var(--primary); background: #fff; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .range-label { font-weight: 700; font-size: 15px; text-align: center; flex: 1; }
 
-  input[type="date"] {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 7px 10px;
-    font-size: 13px;
-    color: var(--text);
-  }
+  input[type="date"] { border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; font-size: 13px; color: var(--text); }
 
-  .exercise-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-  }
+  .exercise-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
   .exercise-row:last-child { border-bottom: none; }
   .exercise-info { flex: 1; min-width: 0; }
   .exercise-name { font-size: 14px; font-weight: 600; }
@@ -156,89 +75,57 @@
   .exercise-progress-track { height: 6px; background: var(--gray); border-radius: 999px; overflow: hidden; margin-top: 7px; }
   .exercise-progress-fill { height: 100%; border-radius: 999px; width: 0%; transition: width .15s ease, background .15s ease; background: var(--gray); }
   .exercise-input-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-  .exercise-input-wrap input {
-    width: 72px;
-    padding: 7px 8px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 14px;
-    text-align: right;
-  }
+  .exercise-input-wrap input { width: 72px; padding: 7px 8px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; text-align: right; }
   .unit { font-size: 12px; color: var(--text-light); width: 22px; }
 
   .overall-summary { margin-top: 6px; padding-top: 14px; border-top: 2px solid var(--border); }
   .progress-track { height: 10px; background: var(--gray); border-radius: 999px; overflow: hidden; margin-top: 8px; }
   .progress-fill { height: 100%; border-radius: 999px; width: 0%; background: var(--gray); transition: width .15s ease, background .15s ease; }
 
-  .save-btn {
-    margin-top: 16px;
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 12px 18px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    width: 100%;
-  }
+  .save-btn { margin-top: 16px; background: var(--primary); color: #fff; border: none; border-radius: 8px; padding: 12px 18px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; }
 
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: #1f2937;
-    color: #fff;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-size: 13px;
-    opacity: 0;
-    transition: all 0.25s ease;
-    pointer-events: none;
-    z-index: 50;
-    max-width: 90%;
-    text-align: center;
-  }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1f2937; color: #fff; padding: 10px 18px; border-radius: 8px; font-size: 13px; opacity: 0; transition: all 0.25s ease; pointer-events: none; z-index: 50; max-width: 90%; text-align: center; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   .pct-badge { display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; border-radius: 999px; padding: 3px 10px; color: #fff; }
 
-  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
-  .stat-box { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px 8px; text-align: center; }
-  .stat-box .val { font-size: 18px; font-weight: 800; color: var(--primary); }
-  .stat-box .lbl { font-size: 10px; color: var(--text-light); margin-top: 2px; }
+  /* ---------- 대시보드(히어로) ---------- */
+  .hero { display: flex; gap: 16px; align-items: center; }
+  .ring-wrap { position: relative; width: 116px; height: 116px; flex-shrink: 0; }
+  .ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ring-val { font-size: 28px; font-weight: 800; line-height: 1.1; }
+  .ring-lbl { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+  .kpi-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; min-width: 0; }
+  .kpi { background: #f8fafc; border: 1px solid #eef0f3; border-radius: 10px; padding: 9px 10px; min-width: 0; }
+  .kpi .k-lbl { font-size: 11px; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .kpi .k-val { font-size: 18px; font-weight: 800; margin-top: 2px; white-space: nowrap; }
+  .kpi .k-val small { font-size: 11px; font-weight: 600; color: var(--text-light); margin-left: 1px; }
+  .kpi .k-sub { font-size: 10px; color: var(--text-light); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   table { width: 100%; border-collapse: collapse; font-size: 12px; }
   th, td { text-align: center; padding: 7px 4px; border-bottom: 1px solid var(--border); }
   th { color: var(--text-light); font-weight: 600; font-size: 11px; }
 
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-  .cal-head { text-align: center; font-size: 11px; font-weight: 700; color: var(--text-light); padding-bottom: 4px; }
-  .cal-cell {
-    min-height: 58px;
-    padding: 3px 1px;
-    border-radius: 7px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    color: #fff;
-    cursor: pointer;
-    font-weight: 700;
-  }
+  /* ---------- 달력 ---------- */
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .cal-head { text-align: center; font-size: 12px; font-weight: 700; color: var(--text-light); padding-bottom: 4px; }
+  .cal-cell { min-height: 84px; padding: 5px 2px; border-radius: 9px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: #fff; cursor: pointer; font-weight: 700; }
   .cal-cell.empty { background: transparent; cursor: default; }
-  .cal-cell .day-num { font-size: 11px; }
-  .cal-cell .day-pct { font-size: 9px; font-weight: 600; opacity: 0.95; }
-  .cal-cell.future { opacity: 0.35; cursor: default; }
+  .cal-cell .day-num { font-size: 14px; }
+  .cal-cell .day-pct { font-size: 11px; font-weight: 600; min-height: 14px; }
+  .cal-cell.future { opacity: 0.45; cursor: default; }
   .cal-cell.today-mark { outline: 2px solid var(--primary); outline-offset: 2px; }
-  .cal-cell .day-icons { display: flex; gap: 1px; justify-content: center; margin-top: 2px; line-height: 1; }
-  .cal-cell .day-icons span { font-size: 11px; background: rgba(255,255,255,0.85); border-radius: 4px; padding: 1px; }
-  .cal-cell .day-icons span.not-done { opacity: 0.45; filter: grayscale(1); }
-  .cal-cell.future .day-icons span { background: transparent; }
+  .cal-cell .day-icons { display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; margin-top: 4px; }
+  .cal-cell .day-icons .ico { font-size: 16px; width: 22px; height: 22px; background: rgba(255,255,255,0.92); border-radius: 6px; padding: 2px; }
+  .cal-cell .day-icons .ico.not-done { opacity: 0.45; filter: grayscale(1); }
+  .cal-cell.future .day-icons .ico { background: transparent; }
 
-  .ex-group { margin-bottom: 14px; }
+  .legend { display: flex; gap: 10px; margin-top: 12px; font-size: 11px; color: var(--text-light); align-items: center; flex-wrap: wrap; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 3px; vertical-align: middle; }
+
+  /* ---------- 운동별 누적 ---------- */
+  .ex-group { margin-bottom: 16px; }
   .ex-group:last-child { margin-bottom: 0; }
   .ex-group-title { font-size: 13px; font-weight: 800; margin-bottom: 4px; }
   .ex-stat { padding: 10px 0; border-top: 1px solid var(--border); }
@@ -246,14 +133,16 @@
   .ex-stat-name { font-size: 13px; font-weight: 700; }
   .ex-stat-total { font-size: 18px; font-weight: 800; color: var(--primary); white-space: nowrap; }
   .ex-stat-total small { font-size: 11px; font-weight: 600; color: var(--text-light); margin-left: 2px; }
-  .ex-stat-sub { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+  .ex-stat-sub { font-size: 11px; color: var(--text-light); margin-top: 4px; }
+  .energy { display: flex; align-items: center; gap: 8px; margin-top: 7px; }
+  .energy-track { position: relative; flex: 1; height: 14px; background: #eef0f3; border-radius: 999px; overflow: hidden; }
+  .energy-fill { height: 100%; border-radius: 999px; transition: width .4s ease; background-image: linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0) 60%); }
+  .energy-track::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0, transparent calc(10% - 2px), rgba(255,255,255,0.9) calc(10% - 2px), rgba(255,255,255,0.9) 10%); }
+  .energy-pct { font-size: 14px; font-weight: 800; min-width: 44px; text-align: right; }
   .mini-bars { display: flex; align-items: flex-end; gap: 1px; height: 36px; margin-top: 8px; background: #f9fafb; border-radius: 4px; padding: 2px; }
   .mini-bar { flex: 1; border-radius: 2px 2px 0 0; height: 0; }
   .mini-bar.sched-empty { background: #e5e7eb; height: 2px; }
   .mini-axis { display: flex; justify-content: space-between; font-size: 9px; color: var(--text-light); margin-top: 2px; }
-
-  .legend { display: flex; gap: 10px; margin-top: 12px; font-size: 10px; color: var(--text-light); align-items: center; flex-wrap: wrap; }
-  .legend-dot { width: 9px; height: 9px; border-radius: 3px; display: inline-block; margin-right: 3px; vertical-align: middle; }
 
   .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 160px; padding-top: 10px; }
   .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
@@ -261,8 +150,26 @@
   .bar-fill { width: 100%; border-radius: 5px 5px 0 0; min-height: 2px; transition: height .3s ease; }
   .bar-label { font-size: 10px; color: var(--text-light); margin-top: 6px; text-align: center; }
 
-  .trend-svg { width: 100%; height: 140px; }
+  .trend-wrap { position: relative; height: 230px; }
+
+  @media (max-width: 480px) {
+    body { padding: 10px; }
+    .card { padding: 14px; }
+    .hero { gap: 10px; }
+    .ring-wrap { width: 96px; height: 96px; }
+    .ring-val { font-size: 22px; }
+    .kpi { padding: 7px 8px; }
+    .kpi .k-val { font-size: 15px; }
+    .cal-grid { gap: 3px; }
+    .cal-cell { min-height: 78px; padding: 4px 1px; }
+    .cal-cell .day-num { font-size: 13px; }
+    .cal-cell .day-pct { font-size: 10px; }
+    .cal-cell .day-icons { gap: 1px; }
+    .cal-cell .day-icons .ico { font-size: 13px; width: 18px; height: 18px; padding: 1px; border-radius: 5px; }
+  }
 </style>
+<!-- 차트 라이브러리 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -317,6 +224,7 @@
         <div class="progress-track"><div class="progress-fill" id="log-overall-bar"></div></div>
       </div>
       <button class="save-btn" id="log-save-btn">저장하기</button>
+      <div class="card-note" style="text-align:center;">숫자를 입력하면 자동으로 저장돼요</div>
     </div>
   </div>
 
@@ -333,11 +241,7 @@
       </div>
     </div>
 
-    <div class="stat-grid">
-      <div class="stat-box"><div class="val" id="week-avg-val">-</div><div class="lbl">주간 평균</div></div>
-      <div class="stat-box"><div class="val" id="week-logged-val">-</div><div class="lbl">기록일 / 7일</div></div>
-      <div class="stat-box"><div class="val" id="week-best-val">-</div><div class="lbl">최고 요일</div></div>
-    </div>
+    <div class="card hero" id="week-hero"></div>
 
     <div class="card">
       <h2>요일별 달성률</h2>
@@ -363,20 +267,16 @@
       </div>
     </div>
 
-    <div class="stat-grid">
-      <div class="stat-box"><div class="val" id="month-avg-val">-</div><div class="lbl">월간 평균</div></div>
-      <div class="stat-box"><div class="val" id="month-logged-val">-</div><div class="lbl">기록일</div></div>
-      <div class="stat-box"><div class="val" id="month-streak-val">-</div><div class="lbl">최고 연속 운동일</div></div>
-    </div>
+    <div class="card hero" id="month-hero"></div>
 
     <div class="card">
       <h2>달력 (날짜 클릭 시 기록 이동)</h2>
       <div class="cal-grid" id="month-cal"></div>
       <div class="legend">
-        <span><span class="legend-dot" style="background:#16a34a;"></span>100%+</span>
-        <span><span class="legend-dot" style="background:#84cc16;"></span>80~99%</span>
-        <span><span class="legend-dot" style="background:#f59e0b;"></span>50~79%</span>
-        <span><span class="legend-dot" style="background:#ef4444;"></span>1~49%</span>
+        <span><span class="legend-dot" style="background:#15803d;"></span>81~100%</span>
+        <span><span class="legend-dot" style="background:#84cc16;"></span>51~80%</span>
+        <span><span class="legend-dot" style="background:#f97316;"></span>31~50%</span>
+        <span><span class="legend-dot" style="background:#ef4444;"></span>1~30%</span>
         <span><span class="legend-dot" style="background:#e5e7eb; border:1px solid #d1d5db;"></span>미기록</span>
       </div>
       <div class="legend" id="icon-legend"></div>
@@ -389,7 +289,8 @@
 
     <div class="card">
       <h2>일별 달성률 추이</h2>
-      <svg class="trend-svg" id="month-trend-svg" viewBox="0 0 300 140" preserveAspectRatio="none"></svg>
+      <div class="trend-wrap" id="month-trend-wrap"><canvas id="month-trend-canvas"></canvas></div>
+      <div class="card-note">막대 = 그날 달성률 (색상은 달력과 동일) · 보라색 선 = 이번 달 누적 평균</div>
     </div>
 
     <div class="card">
@@ -412,11 +313,6 @@ import {
   getFirestore, collection, doc, setDoc, onSnapshot, enableIndexedDbPersistence
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-// ======================================================================
-// 아래 firebaseConfig 를 본인의 Firebase 프로젝트 설정 값으로 교체하세요.
-// Firebase 콘솔 > 프로젝트 설정 > 일반 > "내 앱" 섹션에서 복사할 수 있습니다.
-// (자세한 방법은 함께 받은 설정 가이드 문서를 참고하세요)
-// ======================================================================
 const firebaseConfig = {
   apiKey: "AIzaSyCaMOZkM2YI37M6XejsTFRZIZzfQGYmfYM",
   authDomain: "workout-tracker-a3efa.firebaseapp.com",
@@ -439,7 +335,7 @@ const CARDIO_ABS = [
 ];
 const ROUTINE = {
   1: { label: "가슴 운동", exercises: [
-    { key: "pushup", name: "굽혀펴기", target: 300, unit: "개" },
+    { key: "pushup", name: "팔굽혀펴기", target: 300, unit: "개" },
     { key: "bench", name: "벤치프레스", target: 60, unit: "개" }
   ]},
   2: { label: "유산소 + 복근", exercises: CARDIO_ABS },
@@ -456,26 +352,49 @@ const ROUTINE = {
   ]},
   0: { label: "유산소 + 복근", exercises: CARDIO_ABS }
 };
-// 달력에 표시할 운동 아이콘 (부위별)
-const ICON_GROUPS = [
-  { icon: "💪", name: "가슴", keys: ["pushup", "bench"] },
-  { icon: "🦵", name: "하체", keys: ["squat"] },
-  { icon: "🧗", name: "등", keys: ["pullup", "deadlift"] },
-  { icon: "🤸", name: "어깨", keys: ["shoulder", "handstand"] },
-  { icon: "🏃", name: "유산소", keys: ["cardio"] },
-  { icon: "🍫", name: "복근", keys: ["abs"] }
-];
-function dayIconsHtml(date, entry) {
-  const routineKeys = ROUTINE[date.getDay()].exercises.map(e => e.key);
-  return ICON_GROUPS
-    .filter(g => g.keys.some(k => routineKeys.includes(k)))
-    .map(g => {
-      const done = entry && g.keys.some(k => Number(entry[k]) > 0);
-      return `<span class="${done ? "" : "not-done"}" title="${g.name}">${g.icon}</span>`;
-    }).join("");
-}
 const WEEKDAY_KO = ["일", "월", "화", "수", "목", "금", "토"];
 const LOGS_COLLECTION = "logs";
+
+// ---------- 운동 아이콘 ----------
+// 이모지가 없는 운동(팔굽혀펴기, 벤치프레스, 가슴)은 직접 그린 픽토그램 사용
+const SVG_PUSHUP = `<svg viewBox="0 0 24 24"><line x1="1" y1="21.5" x2="23" y2="21.5" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/><line x1="16.5" y1="11" x2="3.5" y2="19.5" stroke="#3b82f6" stroke-width="3" stroke-linecap="round"/><line x1="15.5" y1="12" x2="16" y2="21" stroke="#e8a765" stroke-width="2" stroke-linecap="round"/><circle cx="19.3" cy="9.3" r="2.6" fill="#f5c28b" stroke="#b7793f" stroke-width=".7"/></svg>`;
+const SVG_BENCH = `<svg viewBox="0 0 24 24"><rect x="4" y="16" width="16" height="2.4" rx="1" fill="#92400e"/><rect x="6" y="18" width="1.8" height="4.5" fill="#92400e"/><rect x="16.2" y="18" width="1.8" height="4.5" fill="#92400e"/><line x1="8.5" y1="14.4" x2="20" y2="14.4" stroke="#3b82f6" stroke-width="2.8" stroke-linecap="round"/><line x1="9.8" y1="14" x2="9.8" y2="6.5" stroke="#e8a765" stroke-width="1.8" stroke-linecap="round"/><line x1="14.4" y1="14" x2="14.4" y2="6.5" stroke="#e8a765" stroke-width="1.8" stroke-linecap="round"/><circle cx="5.8" cy="14" r="2.2" fill="#f5c28b" stroke="#b7793f" stroke-width=".6"/><rect x="1.5" y="5.4" width="21" height="1.6" rx=".8" fill="#6b7280"/><rect x="2.4" y="2.4" width="2.8" height="7.6" rx=".8" fill="#1f2937"/><rect x="18.8" y="2.4" width="2.8" height="7.6" rx=".8" fill="#1f2937"/></svg>`;
+const SVG_CHEST = `<svg viewBox="0 0 24 24"><path d="M5 3.5h14l3.2 5.2-2.2 12.8H4L1.8 8.7z" fill="#f5c28b" stroke="#b7793f" stroke-width=".9" stroke-linejoin="round"/><path d="M9.3 3.6q2.7 2.4 5.4 0" fill="none" stroke="#b7793f" stroke-width=".9"/><path d="M5.2 9.3c2 3.8 4.8 3.6 6.8 1.5 2 2.1 4.8 2.3 6.8-1.5" fill="none" stroke="#b7793f" stroke-width="1.2" stroke-linecap="round"/><path d="M12 11.2v8.3" stroke="#d9a06a" stroke-width=".9"/></svg>`;
+const EX_ICONS = {
+  pushup: SVG_PUSHUP,
+  bench: SVG_BENCH,
+  squat: "🦵",
+  pullup: "🧗",
+  deadlift: "🏋️",
+  shoulder: "🙌",
+  handstand: "🤸",
+  cardio: "🏃",
+  abs: "🍫"
+};
+const EX_ORDER = ["pushup", "bench", "squat", "pullup", "deadlift", "shoulder", "handstand", "cardio", "abs"];
+const EX_INFO = {};
+Object.values(ROUTINE).forEach(r => r.exercises.forEach(ex => { EX_INFO[ex.key] = ex; }));
+// 누적 기록 화면용 부위 그룹
+const GROUPS = [
+  { name: "가슴", icon: SVG_CHEST, keys: ["pushup", "bench"] },
+  { name: "하체", icon: "🦵", keys: ["squat"] },
+  { name: "등", icon: "🧗", keys: ["pullup", "deadlift"] },
+  { name: "어깨", icon: "🙌", keys: ["shoulder", "handstand"] },
+  { name: "유산소", icon: "🏃", keys: ["cardio"] },
+  { name: "복근", icon: "🍫", keys: ["abs"] }
+];
+function iconSpan(content, cls = "", title = "") {
+  return `<span class="ico ${cls}"${title ? ` title="${title}"` : ""}>${content}</span>`;
+}
+function exIcon(key, cls = "") {
+  return iconSpan(EX_ICONS[key] || "", cls, EX_INFO[key] ? EX_INFO[key].name : "");
+}
+function dayIconsHtml(date, entry) {
+  return ROUTINE[date.getDay()].exercises.map(ex => {
+    const done = entry && Number(entry[ex.key]) > 0;
+    return exIcon(ex.key, done ? "" : "not-done");
+  }).join("");
+}
 
 // ---------- 유틸 ----------
 function fmt(d) {
@@ -504,14 +423,20 @@ function computeDayPercent(dateStr, log) {
   });
   return sum / routine.exercises.length;
 }
+// 색상 기준: 1~30% 빨강, 31~50% 주황, 51~80% 연두, 81~100% 진한 녹색
 function pctColor(p) {
   if (p === null || p === undefined) return "#e5e7eb";
-  if (p >= 100) return "#16a34a";
-  if (p >= 80) return "#84cc16";
-  if (p >= 50) return "#f59e0b";
-  return "#ef4444";
+  const r = Math.round(p);
+  if (r >= 81) return "#15803d";
+  if (r >= 51) return "#84cc16";
+  if (r >= 31) return "#f97316";
+  if (r >= 1) return "#ef4444";
+  return "#d1d5db";
 }
-function pctTextColor(p) { return (p === null || p === undefined) ? "#9ca3af" : "#fff"; }
+function pctTextColor(p) {
+  if (p === null || p === undefined || Math.round(p) < 1) return "#6b7280";
+  return "#fff";
+}
 
 let log = {}; // Firestore에서 실시간으로 채워짐
 let unsubscribeLogs = null;
@@ -586,6 +511,7 @@ const panels = {
 
 tabButtons.forEach(btn => {
   btn.addEventListener("click", () => {
+    flushPendingSaves();
     tabButtons.forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
     Object.keys(panels).forEach(k => panels[k].style.display = "none");
@@ -616,7 +542,7 @@ function renderLogForm() {
     row.innerHTML = `
       <div class="exercise-info">
         <div class="row between">
-          <div class="exercise-name">${ex.name}</div>
+          <div class="exercise-name">${exIcon(ex.key)} ${ex.name}</div>
           <span class="exercise-pct" data-key="${ex.key}">0%</span>
         </div>
         <div class="exercise-target">목표 ${ex.target}${ex.unit}</div>
@@ -674,8 +600,7 @@ function ex_name_of(routine, key) {
   return ex ? ex.name : key;
 }
 
-// 입력칸에서 포커스가 빠질 때(값이 바뀐 경우) 그 항목만 즉시 Firestore에 저장.
-// "저장하기" 버튼을 누르는 걸 잊어도 이미 입력한 값은 사라지지 않도록 하기 위함.
+// 입력칸 값이 바뀌면 그 항목만 즉시 Firestore에 저장.
 async function autoSaveField(dateStr, key, rawValue, exName) {
   const value = Number(rawValue) || 0;
   if (!log[dateStr]) log[dateStr] = {};
@@ -720,6 +645,7 @@ logSaveBtn.addEventListener("click", async () => {
   const inputs = logExerciseList.querySelectorAll("input[data-key]");
   const entry = {};
   inputs.forEach(inp => { entry[inp.dataset.key] = Number(inp.value) || 0; });
+  pendingSaves.clear();
   logSaveBtn.disabled = true;
   logSaveBtn.textContent = "저장 중...";
   try {
@@ -740,16 +666,72 @@ function goToLogDate(dateStr) {
   document.querySelector('.tab-btn[data-tab="log"]').classList.add("active");
   Object.keys(panels).forEach(k => panels[k].style.display = "none");
   panels.log.style.display = "block";
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function showToast(msg) {
   const toast = document.getElementById("toast");
   toast.textContent = msg;
   toast.classList.add("show");
-  setTimeout(() => toast.classList.remove("show"), 2400);
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => toast.classList.remove("show"), 2400);
 }
 
-// ================= WEEK TAB (CSS 바 차트) =================
+// ================= 대시보드(히어로) 공통 =================
+function statsOfDates(dates) {
+  // 오늘까지의 날짜만 집계
+  const today = todayStart();
+  const past = dates.filter(d => d <= today);
+  const pcts = past.map(d => computeDayPercent(fmt(d), log));
+  const recorded = pcts.filter(p => p !== null);
+  const avg = recorded.length ? recorded.reduce((a, b) => a + b, 0) / recorded.length : null;
+  const worked = pcts.filter(p => p !== null && p > 0).length;
+  const perfect = pcts.filter(p => p !== null && Math.round(p) >= 81).length;
+  return { elapsed: past.length, avg, worked, perfect, pcts };
+}
+function currentStreak() {
+  // 오늘 아직 기록이 없으면 어제부터 거슬러 올라가며 계산
+  let d = todayStart();
+  if (!(computeDayPercent(fmt(d), log) > 0)) d = addDays(d, -1);
+  let n = 0;
+  while (computeDayPercent(fmt(d), log) > 0) { n++; d = addDays(d, -1); }
+  return n;
+}
+function diffKpi(cur, prev, label) {
+  if (cur === null || prev === null) {
+    return { lbl: `${label} 대비`, val: "-", sub: prev === null ? `${label} 기록 없음` : `${label} ${Math.round(prev)}%` };
+  }
+  const d = Math.round(cur) - Math.round(prev);
+  const val = d > 0 ? `▲ ${d}<small>%p</small>` : d < 0 ? `▼ ${-d}<small>%p</small>` : `± 0<small>%p</small>`;
+  const color = d > 0 ? "#15803d" : d < 0 ? "#ef4444" : "";
+  return { lbl: `${label} 대비`, val, sub: `${label} ${Math.round(prev)}%`, color };
+}
+function renderHero(elId, pct, ringLbl, kpis) {
+  const C = 2 * Math.PI * 42;
+  const has = pct !== null;
+  const p = has ? Math.min(Math.max(pct, 0), 100) : 0;
+  document.getElementById(elId).innerHTML = `
+    <div class="ring-wrap">
+      <svg viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="42" fill="none" stroke="#eef0f3" stroke-width="11"/>
+        <circle cx="50" cy="50" r="42" fill="none" stroke="${has ? pctColor(pct) : "#e5e7eb"}" stroke-width="11"
+          stroke-linecap="${p > 0 ? "round" : "butt"}" stroke-dasharray="${(C * p / 100).toFixed(1)} ${C.toFixed(1)}"/>
+      </svg>
+      <div class="ring-center">
+        <div class="ring-val" style="color:${has ? pctColor(pct) : "#9ca3af"};">${has ? Math.round(pct) + "%" : "-"}</div>
+        <div class="ring-lbl">${ringLbl}</div>
+      </div>
+    </div>
+    <div class="kpi-grid">${kpis.map(k => `
+      <div class="kpi">
+        <div class="k-lbl">${k.lbl}</div>
+        <div class="k-val"${k.color ? ` style="color:${k.color};"` : ""}>${k.val}</div>
+        <div class="k-sub">${k.sub || ""}</div>
+      </div>`).join("")}
+    </div>`;
+}
+
+// ================= WEEK TAB =================
 let currentWeekMonday = getMonday(todayStart());
 const weekRangeLabel = document.getElementById("week-range-label");
 
@@ -761,20 +743,22 @@ function renderWeek() {
   const days = [];
   for (let i = 0; i < 7; i++) days.push(addDays(currentWeekMonday, i));
   const sunday = days[6];
-  weekRangeLabel.textContent = `${fmt(currentWeekMonday).slice(5)} ~ ${fmt(sunday).slice(5)}`;
+  weekRangeLabel.textContent = `${fmt(currentWeekMonday).slice(5).replace("-", "/")} ~ ${fmt(sunday).slice(5).replace("-", "/")}`;
 
   const today = todayStart();
   const pcts = days.map(d => d > today ? null : computeDayPercent(fmt(d), log));
 
-  const loggedCount = pcts.filter(p => p !== null).length;
-  const validPcts = pcts.filter(p => p !== null);
-  const avg = validPcts.length ? validPcts.reduce((a, b) => a + b, 0) / validPcts.length : 0;
-  document.getElementById("week-avg-val").textContent = validPcts.length ? Math.round(avg) + "%" : "-";
-  document.getElementById("week-logged-val").textContent = `${loggedCount} / 7`;
-
+  // --- 대시보드 ---
+  const st = statsOfDates(days);
+  const prevSt = statsOfDates(days.map(d => addDays(d, -7)));
   let bestIdx = -1, bestVal = -1;
   pcts.forEach((p, i) => { if (p !== null && p > bestVal) { bestVal = p; bestIdx = i; } });
-  document.getElementById("week-best-val").textContent = bestIdx >= 0 ? `${WEEKDAY_KO[days[bestIdx].getDay()]} (${Math.round(bestVal)}%)` : "-";
+  renderHero("week-hero", st.avg, "주간 평균", [
+    { lbl: "🗓️ 운동한 날", val: `${st.worked}<small>/${st.elapsed || 7}일</small>`, sub: st.elapsed ? `출석률 ${Math.round(st.worked / st.elapsed * 100)}%` : "아직 시작 전" },
+    { lbl: "🏆 최고 요일", val: bestIdx >= 0 ? `${WEEKDAY_KO[days[bestIdx].getDay()]}요일` : "-", sub: bestIdx >= 0 ? `${Math.round(bestVal)}% 달성` : "" },
+    { lbl: "✅ 목표 달성일", val: `${st.perfect}<small>일</small>`, sub: "달성률 81% 이상" },
+    diffKpi(st.avg, prevSt.avg, "지난주")
+  ]);
 
   const chartEl = document.getElementById("week-chart");
   chartEl.innerHTML = "";
@@ -798,11 +782,11 @@ function renderWeek() {
     const p = pcts[i];
     const badge = p === null
       ? `<span class="pct-badge" style="background:${pctColor(null)}; color:#9ca3af;">${d > today ? "예정" : "미기록"}</span>`
-      : `<span class="pct-badge" style="background:${pctColor(p)};">${Math.round(p)}%</span>`;
+      : `<span class="pct-badge" style="background:${pctColor(p)}; color:${pctTextColor(p)};">${Math.round(p)}%</span>`;
     rows += `<tr>
-      <td>${dateStr.slice(5)}</td>
+      <td>${dateStr.slice(5).replace("-", "/")}</td>
       <td>${WEEKDAY_KO[d.getDay()]}</td>
-      <td>${routine.label}</td>
+      <td style="text-align:left;">${dayIconsHtml(d, log[dateStr])} <span style="color:var(--text-light);">${routine.label}</span></td>
       <td>${badge}</td>
       <td><a href="#" data-date="${dateStr}" class="edit-link" style="color:var(--primary); font-size:11px; text-decoration:none;">기록→</a></td>
     </tr>`;
@@ -821,35 +805,46 @@ document.getElementById("month-prev").addEventListener("click", () => { currentM
 document.getElementById("month-next").addEventListener("click", () => { currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1); renderMonth(); });
 document.getElementById("month-today-btn").addEventListener("click", () => { currentMonth = new Date(todayStart().getFullYear(), todayStart().getMonth(), 1); renderMonth(); });
 
+function monthDates(y, m) {
+  const n = new Date(y, m + 1, 0).getDate();
+  return Array.from({ length: n }, (_, i) => new Date(y, m, i + 1));
+}
+
 function renderMonth() {
   const year = currentMonth.getFullYear(), month = currentMonth.getMonth();
   monthRangeLabel.textContent = `${year}년 ${month + 1}월`;
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const firstDay = new Date(year, month, 1);
+  const dates = monthDates(year, month);
+  const firstDay = dates[0];
   const offset = (firstDay.getDay() + 6) % 7;
   const today = todayStart();
 
-  const dayData = [];
-  for (let dnum = 1; dnum <= daysInMonth; dnum++) {
-    const d = new Date(year, month, dnum);
+  const dayData = dates.map(d => {
     const dateStr = fmt(d);
     const pct = d > today ? undefined : computeDayPercent(dateStr, log);
-    dayData.push({ date: d, dateStr, pct });
-  }
+    return { date: d, dateStr, pct };
+  });
 
-  const recorded = dayData.filter(x => x.pct !== undefined && x.pct !== null);
-  const avg = recorded.length ? recorded.reduce((a, b) => a + b.pct, 0) / recorded.length : 0;
-  document.getElementById("month-avg-val").textContent = recorded.length ? Math.round(avg) + "%" : "-";
-  document.getElementById("month-logged-val").textContent = `${recorded.length}/${dayData.filter(x => x.pct !== undefined).length}일`;
-
-  let maxStreak = 0, curStreak = 0;
+  // --- 대시보드 ---
+  const st = statsOfDates(dates);
+  const prevSt = statsOfDates(monthDates(year, month - 1)); // month-1 이 -1이면 자동으로 작년 12월
+  let maxStreak = 0, run = 0;
   dayData.forEach(x => {
     // 달성률과 상관없이 하루에 조금이라도 운동을 기록했으면 연속으로 카운트
-    if (x.pct !== undefined && x.pct !== null && x.pct > 0) { curStreak++; maxStreak = Math.max(maxStreak, curStreak); }
-    else curStreak = 0;
+    if (x.pct !== undefined && x.pct !== null && x.pct > 0) { run++; maxStreak = Math.max(maxStreak, run); }
+    else run = 0;
   });
-  document.getElementById("month-streak-val").textContent = `${maxStreak}일`;
+  const isThisMonth = year === today.getFullYear() && month === today.getMonth();
+  const streakKpi = isThisMonth
+    ? { lbl: "🔥 연속 운동", val: `${currentStreak()}<small>일째</small>`, sub: `이번 달 최고 ${maxStreak}일` }
+    : { lbl: "🔥 최고 연속", val: `${maxStreak}<small>일</small>`, sub: "운동한 날 기준" };
+  renderHero("month-hero", st.avg, "월간 평균", [
+    { lbl: "🗓️ 운동한 날", val: `${st.worked}<small>/${st.elapsed || dates.length}일</small>`, sub: st.elapsed ? `출석률 ${Math.round(st.worked / st.elapsed * 100)}%` : "아직 시작 전" },
+    streakKpi,
+    { lbl: "✅ 목표 달성일", val: `${st.perfect}<small>일</small>`, sub: "달성률 81% 이상" },
+    diffKpi(st.avg, prevSt.avg, "지난달")
+  ]);
 
+  // --- 달력 ---
   const cal = document.getElementById("month-cal");
   cal.innerHTML = "";
   ["월","화","수","목","금","토","일"].forEach(w => {
@@ -875,30 +870,9 @@ function renderMonth() {
   });
 
   renderMonthExercises(dayData);
+  renderTrend(dayData);
 
-  const svg = document.getElementById("month-trend-svg");
-  const w = 300, h = 140, pad = 10;
-  const points = dayData.map((x, i) => {
-    const px = pad + (i / Math.max(1, dayData.length - 1)) * (w - pad * 2);
-    const val = x.pct === undefined || x.pct === null ? null : x.pct;
-    const py = val === null ? null : h - pad - (Math.min(val, 100) / 100) * (h - pad * 2);
-    return { px, py, val };
-  });
-  let path = "";
-  let started = false;
-  points.forEach(p => {
-    if (p.py === null) { started = false; return; }
-    path += (started ? " L " : "M ") + p.px.toFixed(1) + " " + p.py.toFixed(1);
-    started = true;
-  });
-  const dots = points.filter(p => p.py !== null).map(p =>
-    `<circle cx="${p.px.toFixed(1)}" cy="${p.py.toFixed(1)}" r="2.5" fill="#4f46e5"></circle>`
-  ).join("");
-  svg.innerHTML = `
-    <line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="#e5e7eb" stroke-width="1"/>
-    <path d="${path}" fill="none" stroke="#4f46e5" stroke-width="2"/>
-    ${dots}`;
-
+  // --- 요일별 평균 ---
   const weekdayOrder = [1,2,3,4,5,6,0];
   const sums = {}, counts = {};
   weekdayOrder.forEach(w2 => { sums[w2] = 0; counts[w2] = 0; });
@@ -925,17 +899,75 @@ function renderMonth() {
   });
 }
 
+// ---------- 월간: 일별 달성률 추이 (Chart.js) ----------
+let trendChart = null;
+function renderTrend(dayData) {
+  const wrap = document.getElementById("month-trend-wrap");
+  if (!window.Chart) {
+    wrap.innerHTML = `<div style="font-size:12px; color:#9ca3af; padding-top:90px; text-align:center;">차트를 불러오지 못했어요 (인터넷 연결 확인 후 새로고침)</div>`;
+    return;
+  }
+  const labels = dayData.map(x => `${x.date.getDate()}`);
+  const vals = dayData.map(x => (x.pct === undefined || x.pct === null) ? null : Math.round(x.pct));
+  const colors = vals.map(v => pctColor(v));
+  let sum = 0, cnt = 0;
+  const running = dayData.map((x, i) => {
+    if (vals[i] !== null) { sum += vals[i]; cnt++; }
+    return (x.pct === undefined || !cnt) ? null : Math.round(sum / cnt);
+  });
+  const titles = dayData.map(x => `${x.date.getMonth() + 1}/${x.date.getDate()} (${WEEKDAY_KO[x.date.getDay()]}) · ${ROUTINE[x.date.getDay()].label}`);
+
+  if (trendChart) {
+    trendChart.data.labels = labels;
+    trendChart.data.datasets[0].data = vals;
+    trendChart.data.datasets[0].backgroundColor = colors;
+    trendChart.data.datasets[1].data = running;
+    trendChart.$titles = titles;
+    trendChart.update("none");
+    return;
+  }
+  Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+  trendChart = new Chart(document.getElementById("month-trend-canvas"), {
+    data: {
+      labels,
+      datasets: [
+        { type: "bar", label: "그날 달성률", data: vals, backgroundColor: colors, borderRadius: 4, maxBarThickness: 16, order: 2 },
+        { type: "line", label: "누적 평균", data: running, borderColor: "#4f46e5", backgroundColor: "#4f46e5",
+          borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 4, tension: 0.35, spanGaps: true, order: 1 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      interaction: { mode: "index", intersect: false },
+      scales: {
+        y: { min: 0, max: 100, ticks: { stepSize: 25, callback: v => v + "%", font: { size: 10 } }, grid: { color: "#f1f5f9" } },
+        x: { grid: { display: false }, ticks: { font: { size: 10 }, autoSkip: true, maxTicksLimit: 16, maxRotation: 0 } }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: items => trendChart.$titles[items[0].dataIndex],
+            label: item => item.raw === null ? `${item.dataset.label}: 미기록` : `${item.dataset.label}: ${item.raw}%`
+          }
+        }
+      }
+    }
+  });
+  trendChart.$titles = titles;
+}
+
 // ---------- 월간: 운동별 누적 기록 ----------
 function renderMonthExercises(dayData) {
   const el = document.getElementById("month-exercise-stats");
-  const exInfo = {};
-  Object.values(ROUTINE).forEach(r => r.exercises.forEach(ex => { exInfo[ex.key] = ex; }));
   const n = dayData.length;
   let html = "";
-  ICON_GROUPS.forEach(g => {
-    html += `<div class="ex-group"><div class="ex-group-title">${g.icon} ${g.name}</div>`;
+  GROUPS.forEach(g => {
+    html += `<div class="ex-group"><div class="ex-group-title">${iconSpan(g.icon)} ${g.name}</div>`;
     g.keys.forEach(key => {
-      const ex = exInfo[key];
+      const ex = EX_INFO[key];
       if (!ex) return;
       let total = 0, doneDays = 0, schedDays = 0;
       const bars = dayData.map(x => {
@@ -954,15 +986,17 @@ function renderMonthExercises(dayData) {
         return `<div class="mini-bar"></div>`;
       }).join("");
       const goal = ex.target * schedDays;
-      const sub = goal
-        ? `${doneDays}일 수행 / 예정 ${schedDays}일 · 목표 ${goal.toLocaleString()}${ex.unit} 대비 <b style="color:${pctColor(Math.min(total / goal * 100, 100))};">${Math.round(total / goal * 100)}%</b>`
-        : `이번 달 아직 예정된 날이 없어요`;
+      const gp = goal ? total / goal * 100 : null;
       html += `<div class="ex-stat">
         <div class="ex-stat-head">
-          <span class="ex-stat-name">${ex.name}</span>
+          <span class="ex-stat-name">${exIcon(key)} ${ex.name}</span>
           <span class="ex-stat-total">${total.toLocaleString()}<small>${ex.unit}</small></span>
         </div>
-        <div class="ex-stat-sub">${sub}</div>
+        <div class="energy">
+          <div class="energy-track"><div class="energy-fill" style="width:${gp === null ? 0 : Math.min(gp, 100)}%; background-color:${pctColor(gp)};"></div></div>
+          <span class="energy-pct" style="color:${gp === null ? "#9ca3af" : pctColor(gp)};">${gp === null ? "-" : Math.round(gp) + "%"}</span>
+        </div>
+        <div class="ex-stat-sub">${goal ? `이번 달 목표 ${goal.toLocaleString()}${ex.unit} 중 ${total.toLocaleString()}${ex.unit} · ${doneDays}일 수행 / 예정 ${schedDays}일` : "이번 달 아직 예정된 날이 없어요"}</div>
         <div class="mini-bars">${bars}</div>
         <div class="mini-axis"><span>1일</span><span>${Math.ceil(n / 2)}일</span><span>${n}일</span></div>
       </div>`;
@@ -975,8 +1009,8 @@ function renderMonthExercises(dayData) {
 // ---------- 초기화 ----------
 logDateInput.value = fmt(todayStart());
 document.getElementById("icon-legend").innerHTML =
-  ICON_GROUPS.map(g => `<span>${g.icon} ${g.name}</span>`).join("") +
-  `<span style="opacity:.6;">(흐린 아이콘 = 그날 안 한 운동)</span>`;
+  EX_ORDER.map(k => `<span>${exIcon(k)} ${EX_INFO[k].name}</span>`).join("") +
+  `<span style="opacity:.7;">(흐린 아이콘 = 그날 안 한 운동)</span>`;
 
 // 폰에서 앱을 며칠 열어둔 채로 다시 켜면 날짜가 옛날 날짜로 남아있는 문제 방지:
 // '오늘' 날짜를 보고 있었다면 날짜가 바뀌었을 때 자동으로 새 오늘로 이동
