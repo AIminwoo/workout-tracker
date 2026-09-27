@@ -150,6 +150,14 @@
   .bar-fill { width: 100%; border-radius: 5px 5px 0 0; min-height: 2px; transition: height .3s ease; }
   .bar-label { font-size: 10px; color: var(--text-light); margin-top: 6px; text-align: center; }
 
+  /* ---------- 블로그 ---------- */
+  .btn-row { display: flex; gap: 8px; margin-top: 10px; }
+  .btn { flex: 1; padding: 11px 8px; border-radius: 8px; font-size: 13px; font-weight: 700; border: 1px solid var(--primary); background: #fff; color: var(--primary); cursor: pointer; }
+  .btn.primary { background: var(--primary); color: #fff; }
+  #blog-img { width: 100%; border-radius: 10px; border: 1px solid var(--border); display: block; background: #f3f4f6; min-height: 120px; }
+  #blog-text { width: 100%; min-height: 420px; font-size: 13px; line-height: 1.65; border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-family: inherit; color: var(--text); resize: vertical; }
+  .howto { font-size: 12px; color: var(--text-light); line-height: 1.8; margin: 0; padding-left: 18px; }
+
   .trend-wrap { position: relative; height: 230px; }
 
   @media (max-width: 480px) {
@@ -206,6 +214,7 @@
     <button class="tab-btn active" data-tab="log">기록</button>
     <button class="tab-btn" data-tab="week">주간</button>
     <button class="tab-btn" data-tab="month">월간</button>
+    <button class="tab-btn" data-tab="blog">블로그</button>
   </div>
 
   <!-- LOG TAB -->
@@ -296,6 +305,47 @@
     <div class="card">
       <h2>요일별 평균 달성률 (이번 달)</h2>
       <div class="bar-chart" id="month-weekday-chart"></div>
+    </div>
+  </div>
+
+  <!-- BLOG TAB -->
+  <div class="tab-panel" id="panel-blog" style="display:none;">
+    <div class="card">
+      <div class="row between">
+        <button class="nav-btn" id="blog-prev">‹</button>
+        <div class="range-label" id="blog-range-label"></div>
+        <button class="nav-btn" id="blog-next">›</button>
+      </div>
+      <div class="card-note" style="text-align:center;">블로그 월간 일기의 '운동' 파트에 넣을 결산을 자동으로 만들어요</div>
+    </div>
+
+    <div class="card">
+      <h2>① 결산 이미지</h2>
+      <img id="blog-img" alt="월간 운동 결산 이미지">
+      <div class="btn-row">
+        <button class="btn primary" id="blog-img-save">이미지 저장</button>
+        <button class="btn" id="blog-img-copy">이미지 복사</button>
+      </div>
+      <div class="card-note">휴대폰에서는 이미지를 길게 눌러 사진첩에 저장할 수도 있어요.</div>
+    </div>
+
+    <div class="card">
+      <h2>② 본문 글</h2>
+      <textarea id="blog-text" spellcheck="false"></textarea>
+      <div class="btn-row">
+        <button class="btn primary" id="blog-text-copy">글 전체 복사</button>
+        <button class="btn" id="blog-text-reset">다시 생성</button>
+      </div>
+      <div class="card-note">글은 여기서 바로 고친 뒤 복사해도 돼요. '다시 생성'을 누르면 처음 내용으로 돌아가요.</div>
+    </div>
+
+    <div class="card">
+      <h2>블로그에 올리는 방법</h2>
+      <ol class="howto">
+        <li>'이미지 저장' (또는 '이미지 복사') → 블로그 일기의 운동 파트에 사진으로 첨부</li>
+        <li>'글 전체 복사' → 이미지 바로 아래에 붙여넣기</li>
+        <li>필요하면 첫 문장이나 목표를 내 말투로 살짝 고치면 끝!</li>
+      </ol>
     </div>
   </div>
 </div>
@@ -492,6 +542,7 @@ function startLogListener() {
       if (!isEditingLog) renderLogForm();
       if (panels.week.style.display !== "none") renderWeek();
       if (panels.month.style.display !== "none") renderMonth();
+      if (panels.blog.style.display !== "none") renderBlog();
     },
     err => {
       syncDot.classList.add("offline");
@@ -506,7 +557,8 @@ const tabButtons = document.querySelectorAll(".tab-btn");
 const panels = {
   log: document.getElementById("panel-log"),
   week: document.getElementById("panel-week"),
-  month: document.getElementById("panel-month")
+  month: document.getElementById("panel-month"),
+  blog: document.getElementById("panel-blog")
 };
 
 tabButtons.forEach(btn => {
@@ -519,6 +571,7 @@ tabButtons.forEach(btn => {
     panels[tab].style.display = "block";
     if (tab === "week") renderWeek();
     if (tab === "month") renderMonth();
+    if (tab === "blog") renderBlog();
   });
 });
 
@@ -1005,6 +1058,393 @@ function renderMonthExercises(dayData) {
   });
   el.innerHTML = html;
 }
+
+// ================= BLOG TAB (블로그 업로드용 월간 결산) =================
+// 캔버스에 그릴 수 있도록 SVG 아이콘을 이미지로 미리 준비
+const ICON_IMGS = {};
+const iconReady = Promise.all(Object.entries(EX_ICONS).filter(([, v]) => v.startsWith("<svg")).map(([k, v]) => new Promise(res => {
+  const img = new Image();
+  img.onload = () => { ICON_IMGS[k] = img; res(); };
+  img.onerror = () => res();
+  img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(v.replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" '));
+})));
+
+function monthReport(year, month) {
+  const dates = monthDates(year, month);
+  const today = todayStart();
+  const dayData = dates.map(d => ({ date: d, dateStr: fmt(d), pct: d > today ? undefined : computeDayPercent(fmt(d), log) }));
+  const st = statsOfDates(dates);
+  const prevSt = statsOfDates(monthDates(year, month - 1));
+  let maxStreak = 0, run = 0;
+  dayData.forEach(x => { if (x.pct > 0) { run++; maxStreak = Math.max(maxStreak, run); } else run = 0; });
+  const exStats = EX_ORDER.map(key => {
+    const ex = EX_INFO[key];
+    let total = 0, doneDays = 0, schedDays = 0;
+    dayData.forEach(x => {
+      const val = Number((log[x.dateStr] || {})[key]) || 0;
+      total += val;
+      if (val > 0) doneDays++;
+      if (x.pct !== undefined && ROUTINE[x.date.getDay()].exercises.some(e => e.key === key)) schedDays++;
+    });
+    const goal = ex.target * schedDays;
+    return { key, ex, total, doneDays, schedDays, goal, gp: goal ? total / goal * 100 : null };
+  });
+  const wd = [1, 2, 3, 4, 5, 6, 0].map(w => {
+    const ds = dayData.filter(x => x.pct !== undefined && x.date.getDay() === w);
+    const rec = ds.filter(x => x.pct !== null);
+    return { w, avg: rec.length ? rec.reduce((a, b) => a + b.pct, 0) / rec.length : null, missed: ds.filter(x => !(x.pct > 0)).length };
+  });
+  const reps = exStats.filter(s => s.ex.unit === "개").reduce((a, s) => a + s.total, 0);
+  const minutes = exStats.filter(s => s.ex.unit === "분").reduce((a, s) => a + s.total, 0);
+  const lastDay = dayData.filter(x => x.pct !== undefined).length;
+  return { year, month, dates, dayData, st, prevSt, maxStreak, exStats, wd, reps, minutes, lastDay, complete: lastDay === dates.length };
+}
+
+function reviewPoints(r) {
+  const withGoal = r.exStats.filter(s => s.gp !== null);
+  const best = withGoal.filter(s => s.total > 0).sort((a, b) => b.gp - a.gp)[0] || null;
+  let worst = withGoal.slice().sort((a, b) => a.gp - b.gp)[0] || null;
+  if (worst && best && worst.key === best.key) worst = null;
+  const bestWd = r.wd.filter(x => x.avg !== null && x.avg > 0).sort((a, b) => b.avg - a.avg)[0] || null;
+  const missWd = r.wd.filter(x => x.missed > 0).sort((a, b) => b.missed - a.missed)[0] || null;
+  return { best, worst, bestWd, missWd };
+}
+function periodText(r) {
+  const m = r.month + 1;
+  return r.complete ? `${m}월 한 달` : `${m}월 1일 ~ ${m}월 ${r.lastDay}일 기준`;
+}
+function diffInfo(r) {
+  if (r.st.avg === null || r.prevSt.avg === null) return null;
+  const d = Math.round(r.st.avg) - Math.round(r.prevSt.avg);
+  return { d, sign: d > 0 ? "▲" : d < 0 ? "▼" : "±", prev: Math.round(r.prevSt.avg) };
+}
+function energyText(p) {
+  const n = Math.max(0, Math.min(10, Math.round((p || 0) / 10)));
+  return "▰".repeat(n) + "▱".repeat(10 - n);
+}
+
+function blogText(r) {
+  const m = r.month + 1;
+  const prevM = m === 1 ? 12 : m - 1;
+  const nextM = m === 12 ? 1 : m + 1;
+  const rv = reviewPoints(r);
+  const line = "━━━━━━━━━━━━━━━";
+  const avg = r.st.avg;
+  const attend = r.st.elapsed ? Math.round(r.st.worked / r.st.elapsed * 100) : 0;
+  const di = diffInfo(r);
+  // 첫 문장은 '기록 안 한 날 = 0%'로 본 실질 점수로 판단 (출석률까지 반영)
+  const eff = r.st.elapsed ? r.st.pcts.reduce((a, p) => a + (p || 0), 0) / r.st.elapsed : null;
+  let intro;
+  if (avg === null) intro = "이번 달은 아직 운동 기록이 없다. 이제부터 시작!";
+  else if (eff >= 81) intro = "이번 달은 루틴을 거의 완벽하게 지켜냈다! 스스로 칭찬해주고 싶은 한 달 👏";
+  else if (eff >= 51) intro = "이번 달은 꽤 꾸준하게 루틴을 이어갔다. 이 흐름 그대로 가보자 💪";
+  else if (eff >= 25) intro = "바쁜 와중에도 틈틈이 운동을 챙긴 한 달이었다. 다음 달엔 조금 더 욕심내보기 🔥";
+  else intro = "이번 달은 생각보다 운동을 많이 못 챙겼다 😅 그래도 기록은 놓지 않았으니, 다음 달엔 다시 루틴을 되찾아보자!";
+
+  const L = [];
+  L.push(`🏋️ ${r.year}년 ${m}월 운동 결산`, "", intro, `(${periodText(r)})`, "");
+  L.push(line, `📊 한눈에 보는 ${m}월`, line);
+  L.push(`✔ 월간 평균 달성률 : ${avg === null ? "-" : Math.round(avg) + "%"}`);
+  L.push(`✔ 운동한 날 : ${r.st.worked}일 / ${r.st.elapsed}일 (출석률 ${attend}%)`);
+  L.push(`✔ 최고 연속 운동 : ${r.maxStreak}일`);
+  L.push(`✔ 목표 달성일 (달성률 81% 이상) : ${r.st.perfect}일`);
+  L.push(`✔ 총 운동량 : 근력 ${r.reps.toLocaleString()}회 · 유산소 ${r.minutes.toLocaleString()}분`);
+  L.push(`✔ 지난달 대비 : ${di ? `${di.sign} ${Math.abs(di.d)}%p (${prevM}월 ${di.prev}%)` : "지난달 기록 없음"}`, "");
+  L.push(line, "💪 운동별 누적 기록", line);
+  GROUPS.forEach(g => {
+    L.push(`[${g.name}]`);
+    g.keys.forEach(k => {
+      const s = r.exStats.find(x => x.key === k);
+      L.push(`· ${s.ex.name} ${s.total.toLocaleString()}${s.ex.unit}` +
+        (s.goal ? ` / 목표 ${s.goal.toLocaleString()}${s.ex.unit}` : ""));
+      if (s.goal) L.push(`  ${energyText(s.gp)} ${Math.round(s.gp)}%`);
+    });
+    L.push("");
+  });
+  L.push(line, "📝 이번 달 돌아보기", line);
+  if (rv.best) L.push(`👍 가장 잘한 운동 : ${rv.best.ex.name} (목표 대비 ${Math.round(rv.best.gp)}%)`);
+  if (rv.bestWd) L.push(`🔥 가장 열심히 한 요일 : ${WEEKDAY_KO[rv.bestWd.w]}요일 (평균 ${Math.round(rv.bestWd.avg)}%)`);
+  if (rv.worst) L.push(`😅 아쉬운 운동 : ${rv.worst.ex.name} (목표 대비 ${Math.round(rv.worst.gp)}%)`);
+  if (rv.missWd) L.push(`📅 가장 많이 빠진 요일 : ${WEEKDAY_KO[rv.missWd.w]}요일 (${rv.missWd.missed}번)`);
+  L.push("");
+  L.push(line, `🎯 ${nextM}월 목표`, line);
+  const target = avg === null ? 50 : Math.min(100, Math.round(avg) + 10);
+  L.push(`· 월간 평균 달성률 ${target}% 이상 도전`);
+  if (rv.missWd) L.push(`· ${WEEKDAY_KO[rv.missWd.w]}요일 ${ROUTINE[rv.missWd.w].label} 빼먹지 않기`);
+  if (rv.worst && rv.worst.gp < 50) L.push(`· ${rv.worst.ex.name} 목표량의 절반 이상 채우기`);
+  L.push(`· 주 5일 이상 운동하기`, "");
+  L.push(`#운동일기 #운동기록 #${m}월운동 #오운완 #홈트레이닝 #운동습관 #월간결산`);
+  return L.join("\n");
+}
+
+// ---------- 결산 이미지 (캔버스) ----------
+const IMG_FONT = '"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif';
+const EMOJI_FONT = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+function rrPath(c, x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2);
+  c.beginPath();
+  c.moveTo(x + r, y);
+  c.arcTo(x + w, y, x + w, y + h, r);
+  c.arcTo(x + w, y + h, x, y + h, r);
+  c.arcTo(x, y + h, x, y, r);
+  c.arcTo(x, y, x + w, y, r);
+  c.closePath();
+}
+function rrFill(c, x, y, w, h, r, fill, stroke) {
+  rrPath(c, x, y, w, h, r);
+  c.fillStyle = fill; c.fill();
+  if (stroke) { c.strokeStyle = stroke; c.lineWidth = 2; c.stroke(); }
+}
+function drawIcon(c, key, x, y, size) {
+  if (ICON_IMGS[key]) { c.drawImage(ICON_IMGS[key], x, y, size, size); return; }
+  c.save();
+  c.font = `${Math.round(size * 0.86)}px ${EMOJI_FONT}`;
+  c.textAlign = "center"; c.textBaseline = "middle"; c.fillStyle = "#000";
+  c.fillText(EX_ICONS[key], x + size / 2, y + size / 2 + 1);
+  c.restore();
+}
+function drawEmoji(c, emoji, x, y, size, align = "left") {
+  c.save();
+  c.font = `${size}px ${EMOJI_FONT}`;
+  c.textAlign = align; c.textBaseline = "alphabetic"; c.fillStyle = "#000";
+  c.fillText(emoji, x, y);
+  c.restore();
+}
+
+async function drawBlogImage(r) {
+  await iconReady;
+  const W = 1080, P = 56, MAXH = 4200;
+  const m = r.month + 1;
+  const cv = document.createElement("canvas");
+  cv.width = W; cv.height = MAXH;
+  const c = cv.getContext("2d");
+  const font = (w, s) => `${w} ${s}px ${IMG_FONT}`;
+  const card = (x, y, w, h) => {
+    c.save(); c.shadowColor = "rgba(15,23,42,0.08)"; c.shadowBlur = 24; c.shadowOffsetY = 6;
+    rrFill(c, x, y, w, h, 28, "#ffffff"); c.restore();
+  };
+  const title = (emoji, text, x, y) => {
+    drawEmoji(c, emoji, x, y, 34);
+    c.fillStyle = "#1f2937"; c.font = font(800, 34); c.textAlign = "left"; c.fillText(text, x + 50, y);
+  };
+  c.fillStyle = "#f4f5fb"; c.fillRect(0, 0, W, MAXH);
+
+  // ---- 헤더 ----
+  const g = c.createLinearGradient(0, 0, W, 260);
+  g.addColorStop(0, "#4f46e5"); g.addColorStop(1, "#7c3aed");
+  c.fillStyle = g; c.fillRect(0, 0, W, 260);
+  c.textAlign = "left"; c.textBaseline = "alphabetic";
+  c.fillStyle = "rgba(255,255,255,0.75)"; c.font = font(700, 24);
+  c.fillText("MONTHLY WORKOUT REPORT", P, 74);
+  c.fillStyle = "#ffffff"; c.font = font(800, 62);
+  c.fillText(`${r.year}년 ${m}월 운동 결산`, P, 152);
+  c.fillStyle = "rgba(255,255,255,0.92)"; c.font = font(500, 28);
+  c.fillText(`${periodText(r)}  ·  근력 ${r.reps.toLocaleString()}회  ·  유산소 ${r.minutes.toLocaleString()}분`, P, 210);
+  drawEmoji(c, "🏋️", W - P, 176, 104, "right");
+
+  // ---- 요약 카드 ----
+  let y = 296;
+  const avg = r.st.avg;
+  const sumH = 330;
+  card(P, y, W - P * 2, sumH);
+  const cx = P + 160, cy = y + sumH / 2, R = 112;
+  c.lineWidth = 30; c.strokeStyle = "#eef0f3";
+  c.beginPath(); c.arc(cx, cy, R, 0, Math.PI * 2); c.stroke();
+  if (avg !== null && avg > 0) {
+    c.strokeStyle = pctColor(avg); c.lineCap = "round";
+    c.beginPath(); c.arc(cx, cy, R, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(avg, 100) / 100); c.stroke();
+    c.lineCap = "butt";
+  }
+  c.textAlign = "center";
+  c.fillStyle = avg === null ? "#9ca3af" : pctColor(avg); c.font = font(800, 66);
+  c.fillText(avg === null ? "-" : Math.round(avg) + "%", cx, cy + 14);
+  c.fillStyle = "#6b7280"; c.font = font(600, 24);
+  c.fillText("월간 평균", cx, cy + 54);
+  c.textAlign = "left";
+
+  const di = diffInfo(r);
+  const attend = r.st.elapsed ? Math.round(r.st.worked / r.st.elapsed * 100) : 0;
+  const kpis = [
+    { lbl: "🗓️ 운동한 날", val: `${r.st.worked}`, unit: `/ ${r.st.elapsed}일`, sub: `출석률 ${attend}%` },
+    { lbl: "🔥 최고 연속", val: `${r.maxStreak}`, unit: "일", sub: "운동한 날 기준" },
+    { lbl: "✅ 목표 달성일", val: `${r.st.perfect}`, unit: "일", sub: "달성률 81% 이상" },
+    di ? { lbl: "📈 지난달 대비", val: `${di.sign} ${Math.abs(di.d)}`, unit: "%p", sub: `지난달 ${di.prev}%`, color: di.d > 0 ? "#15803d" : di.d < 0 ? "#ef4444" : "#1f2937" }
+       : { lbl: "📈 지난달 대비", val: "-", unit: "", sub: "지난달 기록 없음" }
+  ];
+  const kx = P + 350, kgap = 18, kw = (W - P - 28 - kx - kgap) / 2, kh = 136;
+  kpis.forEach((k, i) => {
+    const bx = kx + (i % 2) * (kw + kgap), by = y + 22 + Math.floor(i / 2) * (kh + kgap);
+    rrFill(c, bx, by, kw, kh, 20, "#f8fafc", "#eef0f3");
+    c.fillStyle = "#6b7280"; c.font = font(600, 23); c.fillText(k.lbl, bx + 22, by + 40);
+    c.fillStyle = k.color || "#1f2937"; c.font = font(800, 44); c.fillText(k.val, bx + 22, by + 92);
+    const vw = c.measureText(k.val).width;
+    c.fillStyle = "#6b7280"; c.font = font(600, 22); c.fillText(k.unit, bx + 28 + vw, by + 92);
+    c.fillStyle = "#9ca3af"; c.font = font(500, 19); c.fillText(k.sub, bx + 22, by + 122);
+  });
+  y += sumH + 32;
+
+  // ---- 달력 카드 ----
+  const offset = (r.dates[0].getDay() + 6) % 7;
+  const rows = Math.ceil((offset + r.dates.length) / 7);
+  const gx = P + 26, gw = W - P * 2 - 52, gap = 8;
+  const CW = (gw - gap * 6) / 7, CH = 124;
+  const calH = 118 + rows * (CH + gap) + 70;
+  card(P, y, W - P * 2, calH);
+  title("📅", `${m}월 운동 달력`, P + 30, y + 60);
+  c.font = font(700, 22); c.fillStyle = "#6b7280"; c.textAlign = "center";
+  ["월", "화", "수", "목", "금", "토", "일"].forEach((w, i) => c.fillText(w, gx + i * (CW + gap) + CW / 2, y + 104));
+  c.textAlign = "left";
+  const gy = y + 118;
+  r.dayData.forEach((x, idx) => {
+    const pos = offset + idx;
+    const col = pos % 7, row = Math.floor(pos / 7);
+    const bx = gx + col * (CW + gap), by = gy + row * (CH + gap);
+    const future = x.pct === undefined;
+    rrFill(c, bx, by, CW, CH, 16, future ? "#eef0f3" : pctColor(x.pct));
+    const tc = future ? "#9ca3af" : pctTextColor(x.pct);
+    c.fillStyle = tc; c.font = font(800, 28); c.textAlign = "left";
+    c.fillText(`${x.date.getDate()}`, bx + 12, by + 36);
+    if (!future && x.pct !== null) {
+      c.font = font(700, 21); c.textAlign = "right";
+      c.fillText(`${Math.round(x.pct)}%`, bx + CW - 10, by + 35);
+      c.textAlign = "left";
+    }
+    const exs = ROUTINE[x.date.getDay()].exercises;
+    const chip = 26, cg = 3, iconsW = exs.length * chip + (exs.length - 1) * cg;
+    let ix = bx + (CW - iconsW) / 2;
+    const iy = by + CH - chip - 12;
+    const entry = log[x.dateStr];
+    exs.forEach(ex => {
+      const done = entry && Number(entry[ex.key]) > 0;
+      c.save();
+      c.globalAlpha = future ? 0.35 : done ? 1 : 0.4;
+      if (!future) rrFill(c, ix, iy, chip, chip, 7, "rgba(255,255,255,0.95)");
+      drawIcon(c, ex.key, ix + 3, iy + 3, chip - 6);
+      c.restore();
+      ix += chip + cg;
+    });
+  });
+  // 범례
+  const ly = gy + rows * (CH + gap) + 30;
+  let lx = gx;
+  [["#15803d", "81~100%"], ["#84cc16", "51~80%"], ["#f97316", "31~50%"], ["#ef4444", "1~30%"], ["#e5e7eb", "미기록"]].forEach(([col, t]) => {
+    rrFill(c, lx, ly - 16, 20, 20, 5, col);
+    c.fillStyle = "#6b7280"; c.font = font(600, 20); c.fillText(t, lx + 28, ly);
+    lx += 40 + c.measureText(t).width + 18;
+  });
+  c.fillStyle = "#9ca3af"; c.font = font(500, 19); c.textAlign = "right";
+  c.fillText("흐린 아이콘 = 안 한 운동", gx + gw, ly);
+  c.textAlign = "left";
+  y += calH + 32;
+
+  // ---- 운동별 누적 카드 ----
+  const RH = 96;
+  const exH = 100 + r.exStats.length * RH + 16;
+  card(P, y, W - P * 2, exH);
+  title("💪", "운동별 누적 기록", P + 30, y + 60);
+  let ry = y + 92;
+  const groupOf = k => (GROUPS.find(gp => gp.keys.includes(k)) || {}).name || "";
+  r.exStats.forEach(s => {
+    drawIcon(c, s.key, P + 30, ry + 12, 46);
+    c.fillStyle = "#1f2937"; c.font = font(700, 29); c.textAlign = "left";
+    c.fillText(s.ex.name, P + 94, ry + 40);
+    const nw = c.measureText(s.ex.name).width;
+    c.fillStyle = "#9ca3af"; c.font = font(600, 19);
+    c.fillText(groupOf(s.key), P + 104 + nw, ry + 40);
+    // 누적 수치
+    c.textAlign = "right";
+    c.fillStyle = "#6b7280"; c.font = font(600, 21);
+    c.fillText(s.ex.unit, W - P - 30, ry + 40);
+    const uw = c.measureText(s.ex.unit).width;
+    c.fillStyle = "#4f46e5"; c.font = font(800, 34);
+    c.fillText(s.total.toLocaleString(), W - P - 34 - uw, ry + 40);
+    // 에너지 바
+    const bx = P + 94, bw = W - P * 2 - 94 - 30 - 110, byy = ry + 56, bh = 22;
+    rrFill(c, bx, byy, bw, bh, bh / 2, "#eef0f3");
+    if (s.gp) {
+      c.save(); rrPath(c, bx, byy, bw, bh, bh / 2); c.clip();
+      rrFill(c, bx, byy, Math.max(bw * Math.min(s.gp, 100) / 100, bh), bh, bh / 2, pctColor(s.gp));
+      c.restore();
+    }
+    c.fillStyle = "#ffffff";
+    for (let i = 1; i < 10; i++) c.fillRect(bx + bw * i / 10 - 1.5, byy, 3, bh);
+    c.fillStyle = s.gp === null ? "#9ca3af" : pctColor(s.gp); c.font = font(800, 26);
+    c.fillText(s.gp === null ? "-" : `${Math.round(s.gp)}%`, W - P - 30, ry + 76);
+    c.textAlign = "left";
+    ry += RH;
+  });
+  y += exH + 32;
+
+  // ---- 돌아보기 카드 ----
+  const rv = reviewPoints(r);
+  const lines = [
+    rv.best && ["👍", `가장 잘한 운동 : ${rv.best.ex.name} (목표 대비 ${Math.round(rv.best.gp)}%)`],
+    rv.bestWd && ["🔥", `가장 열심히 한 요일 : ${WEEKDAY_KO[rv.bestWd.w]}요일 (평균 ${Math.round(rv.bestWd.avg)}%)`],
+    rv.worst && ["😅", `아쉬운 운동 : ${rv.worst.ex.name} (목표 대비 ${Math.round(rv.worst.gp)}%)`],
+    rv.missWd && ["📅", `가장 많이 빠진 요일 : ${WEEKDAY_KO[rv.missWd.w]}요일 (${rv.missWd.missed}번)`]
+  ].filter(Boolean);
+  if (lines.length) {
+    const rvH = 96 + lines.length * 54 + 12;
+    card(P, y, W - P * 2, rvH);
+    title("📝", "이번 달 돌아보기", P + 30, y + 60);
+    lines.forEach(([e, t], i) => {
+      const ty = y + 120 + i * 54;
+      drawEmoji(c, e, P + 34, ty, 28);
+      c.fillStyle = "#374151"; c.font = font(600, 27); c.fillText(t, P + 80, ty);
+    });
+    y += rvH + 32;
+  }
+
+  // ---- 푸터 ----
+  c.fillStyle = "#9ca3af"; c.font = font(600, 22); c.textAlign = "center";
+  c.fillText("운동 루틴 트래커로 매일 기록했어요  ·  #오운완", W / 2, y + 30);
+  c.textAlign = "left";
+  const H = y + 64;
+
+  const out = document.createElement("canvas");
+  out.width = W; out.height = H;
+  out.getContext("2d").drawImage(cv, 0, 0, W, H, 0, 0, W, H);
+  return out;
+}
+
+let blogCanvas = null, blogDirty = false, blogKey = "";
+async function renderBlog(force) {
+  const y = currentMonth.getFullYear(), m = currentMonth.getMonth();
+  document.getElementById("blog-range-label").textContent = `${y}년 ${m + 1}월 결산`;
+  const r = monthReport(y, m);
+  const key = `${y}-${m}`;
+  const ta = document.getElementById("blog-text");
+  if (force || !blogDirty || key !== blogKey) { ta.value = blogText(r); blogDirty = false; }
+  blogKey = key;
+  blogCanvas = await drawBlogImage(r);
+  document.getElementById("blog-img").src = blogCanvas.toDataURL("image/png");
+}
+document.getElementById("blog-text").addEventListener("input", () => { blogDirty = true; });
+document.getElementById("blog-prev").addEventListener("click", () => { currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1); renderBlog(); });
+document.getElementById("blog-next").addEventListener("click", () => { currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1); renderBlog(); });
+document.getElementById("blog-text-reset").addEventListener("click", () => { renderBlog(true); showToast("처음 내용으로 다시 만들었어요"); });
+document.getElementById("blog-text-copy").addEventListener("click", async () => {
+  const ta = document.getElementById("blog-text");
+  try { await navigator.clipboard.writeText(ta.value); }
+  catch (e) { ta.focus(); ta.select(); document.execCommand("copy"); }
+  showToast("글을 복사했어요. 블로그에 붙여넣기 하세요");
+});
+document.getElementById("blog-img-save").addEventListener("click", () => {
+  if (!blogCanvas) return;
+  const a = document.createElement("a");
+  a.href = blogCanvas.toDataURL("image/png");
+  a.download = `운동결산_${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, "0")}.png`;
+  document.body.appendChild(a); a.click(); a.remove();
+});
+document.getElementById("blog-img-copy").addEventListener("click", async () => {
+  try {
+    if (!blogCanvas || !navigator.clipboard || !window.ClipboardItem) throw new Error("unsupported");
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": new Promise(res => blogCanvas.toBlob(res, "image/png")) })]);
+    showToast("이미지를 복사했어요. 블로그에 붙여넣기 하세요");
+  } catch (e) {
+    showToast("이 기기는 이미지 복사가 안 돼요. '이미지 저장'이나 길게 눌러 저장하세요");
+  }
+});
 
 // ---------- 초기화 ----------
 logDateInput.value = fmt(todayStart());
