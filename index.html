@@ -216,7 +216,8 @@
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
   .cal-head { text-align: center; font-size: 11px; font-weight: 700; color: var(--text-light); padding-bottom: 4px; }
   .cal-cell {
-    aspect-ratio: 1;
+    min-height: 58px;
+    padding: 3px 1px;
     border-radius: 7px;
     display: flex;
     flex-direction: column;
@@ -232,6 +233,24 @@
   .cal-cell .day-pct { font-size: 9px; font-weight: 600; opacity: 0.95; }
   .cal-cell.future { opacity: 0.35; cursor: default; }
   .cal-cell.today-mark { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .cal-cell .day-icons { display: flex; gap: 1px; justify-content: center; margin-top: 2px; line-height: 1; }
+  .cal-cell .day-icons span { font-size: 11px; background: rgba(255,255,255,0.85); border-radius: 4px; padding: 1px; }
+  .cal-cell .day-icons span.not-done { opacity: 0.45; filter: grayscale(1); }
+  .cal-cell.future .day-icons span { background: transparent; }
+
+  .ex-group { margin-bottom: 14px; }
+  .ex-group:last-child { margin-bottom: 0; }
+  .ex-group-title { font-size: 13px; font-weight: 800; margin-bottom: 4px; }
+  .ex-stat { padding: 10px 0; border-top: 1px solid var(--border); }
+  .ex-stat-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .ex-stat-name { font-size: 13px; font-weight: 700; }
+  .ex-stat-total { font-size: 18px; font-weight: 800; color: var(--primary); white-space: nowrap; }
+  .ex-stat-total small { font-size: 11px; font-weight: 600; color: var(--text-light); margin-left: 2px; }
+  .ex-stat-sub { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+  .mini-bars { display: flex; align-items: flex-end; gap: 1px; height: 36px; margin-top: 8px; background: #f9fafb; border-radius: 4px; padding: 2px; }
+  .mini-bar { flex: 1; border-radius: 2px 2px 0 0; height: 0; }
+  .mini-bar.sched-empty { background: #e5e7eb; height: 2px; }
+  .mini-axis { display: flex; justify-content: space-between; font-size: 9px; color: var(--text-light); margin-top: 2px; }
 
   .legend { display: flex; gap: 10px; margin-top: 12px; font-size: 10px; color: var(--text-light); align-items: center; flex-wrap: wrap; }
   .legend-dot { width: 9px; height: 9px; border-radius: 3px; display: inline-block; margin-right: 3px; vertical-align: middle; }
@@ -347,7 +366,7 @@
     <div class="stat-grid">
       <div class="stat-box"><div class="val" id="month-avg-val">-</div><div class="lbl">월간 평균</div></div>
       <div class="stat-box"><div class="val" id="month-logged-val">-</div><div class="lbl">기록일</div></div>
-      <div class="stat-box"><div class="val" id="month-streak-val">-</div><div class="lbl">최고 연속</div></div>
+      <div class="stat-box"><div class="val" id="month-streak-val">-</div><div class="lbl">최고 연속 운동일</div></div>
     </div>
 
     <div class="card">
@@ -360,6 +379,12 @@
         <span><span class="legend-dot" style="background:#ef4444;"></span>1~49%</span>
         <span><span class="legend-dot" style="background:#e5e7eb; border:1px solid #d1d5db;"></span>미기록</span>
       </div>
+      <div class="legend" id="icon-legend"></div>
+    </div>
+
+    <div class="card">
+      <h2>운동별 누적 기록 (이번 달)</h2>
+      <div id="month-exercise-stats"></div>
     </div>
 
     <div class="card">
@@ -431,6 +456,24 @@ const ROUTINE = {
   ]},
   0: { label: "유산소 + 복근", exercises: CARDIO_ABS }
 };
+// 달력에 표시할 운동 아이콘 (부위별)
+const ICON_GROUPS = [
+  { icon: "💪", name: "가슴", keys: ["pushup", "bench"] },
+  { icon: "🦵", name: "하체", keys: ["squat"] },
+  { icon: "🧗", name: "등", keys: ["pullup", "deadlift"] },
+  { icon: "🤸", name: "어깨", keys: ["shoulder", "handstand"] },
+  { icon: "🏃", name: "유산소", keys: ["cardio"] },
+  { icon: "🍫", name: "복근", keys: ["abs"] }
+];
+function dayIconsHtml(date, entry) {
+  const routineKeys = ROUTINE[date.getDay()].exercises.map(e => e.key);
+  return ICON_GROUPS
+    .filter(g => g.keys.some(k => routineKeys.includes(k)))
+    .map(g => {
+      const done = entry && g.keys.some(k => Number(entry[k]) > 0);
+      return `<span class="${done ? "" : "not-done"}" title="${g.name}">${g.icon}</span>`;
+    }).join("");
+}
 const WEEKDAY_KO = ["일", "월", "화", "수", "목", "금", "토"];
 const LOGS_COLLECTION = "logs";
 
@@ -586,10 +629,44 @@ function renderLogForm() {
     logExerciseList.appendChild(row);
   });
   logExerciseList.querySelectorAll("input[data-key]").forEach(inp => {
-    inp.addEventListener("input", () => updateLivePercents(routine));
-    inp.addEventListener("change", () => autoSaveField(dateStr, inp.dataset.key, inp.value, ex_name_of(routine, inp.dataset.key)));
+    const key = inp.dataset.key;
+    const name = ex_name_of(routine, key);
+    inp.addEventListener("input", () => {
+      updateLivePercents(routine);
+      scheduleSave(dateStr, key, inp, name); // 입력 멈추고 0.8초 뒤 자동 저장
+    });
+    inp.addEventListener("change", () => {
+      cancelScheduledSave(dateStr, key);
+      autoSaveField(dateStr, key, inp.value, name);
+    });
   });
   updateLivePercents(routine);
+}
+
+// ---------- 타이핑 중 자동 저장 (디바운스) ----------
+// 폰에서 숫자만 입력하고 바로 앱을 닫아도 저장되도록, 입력이 멈추면 곧바로 저장.
+const pendingSaves = new Map(); // "date|key" -> { timer, dateStr, key, inp, name }
+function scheduleSave(dateStr, key, inp, name) {
+  const id = dateStr + "|" + key;
+  const prev = pendingSaves.get(id);
+  if (prev) clearTimeout(prev.timer);
+  const timer = setTimeout(() => {
+    pendingSaves.delete(id);
+    autoSaveField(dateStr, key, inp.value, name);
+  }, 800);
+  pendingSaves.set(id, { timer, dateStr, key, inp, name });
+}
+function cancelScheduledSave(dateStr, key) {
+  const id = dateStr + "|" + key;
+  const p = pendingSaves.get(id);
+  if (p) { clearTimeout(p.timer); pendingSaves.delete(id); }
+}
+function flushPendingSaves() {
+  pendingSaves.forEach(p => {
+    clearTimeout(p.timer);
+    autoSaveField(p.dateStr, p.key, p.inp.value, p.name);
+  });
+  pendingSaves.clear();
 }
 
 function ex_name_of(routine, key) {
@@ -636,7 +713,7 @@ function updateLivePercents(routine) {
   overallBarEl.style.background = hasAny ? pctColor(overall) : "var(--gray)";
 }
 
-logDateInput.addEventListener("change", renderLogForm);
+logDateInput.addEventListener("change", () => { flushPendingSaves(); renderLogForm(); });
 
 logSaveBtn.addEventListener("click", async () => {
   const dateStr = logDateInput.value;
@@ -767,7 +844,8 @@ function renderMonth() {
 
   let maxStreak = 0, curStreak = 0;
   dayData.forEach(x => {
-    if (x.pct !== undefined && x.pct !== null && x.pct >= 80) { curStreak++; maxStreak = Math.max(maxStreak, curStreak); }
+    // 달성률과 상관없이 하루에 조금이라도 운동을 기록했으면 연속으로 카운트
+    if (x.pct !== undefined && x.pct !== null && x.pct > 0) { curStreak++; maxStreak = Math.max(maxStreak, curStreak); }
     else curStreak = 0;
   });
   document.getElementById("month-streak-val").textContent = `${maxStreak}일`;
@@ -791,10 +869,12 @@ function renderMonth() {
     cell.className = "cal-cell" + (isFuture ? " future" : "") + (fmt(x.date) === fmt(today) ? " today-mark" : "");
     cell.style.background = isFuture ? "#f3f4f6" : pctColor(x.pct);
     cell.style.color = isFuture ? "#9ca3af" : pctTextColor(x.pct);
-    cell.innerHTML = `<div class="day-num">${x.date.getDate()}</div><div class="day-pct">${x.pct !== undefined && x.pct !== null ? Math.round(x.pct) + "%" : ""}</div>`;
+    cell.innerHTML = `<div class="day-num">${x.date.getDate()}</div><div class="day-pct">${x.pct !== undefined && x.pct !== null ? Math.round(x.pct) + "%" : ""}</div><div class="day-icons">${dayIconsHtml(x.date, log[x.dateStr])}</div>`;
     if (!isFuture) cell.addEventListener("click", () => goToLogDate(x.dateStr));
     cal.appendChild(cell);
   });
+
+  renderMonthExercises(dayData);
 
   const svg = document.getElementById("month-trend-svg");
   const w = 300, h = 140, pad = 10;
@@ -845,8 +925,82 @@ function renderMonth() {
   });
 }
 
+// ---------- 월간: 운동별 누적 기록 ----------
+function renderMonthExercises(dayData) {
+  const el = document.getElementById("month-exercise-stats");
+  const exInfo = {};
+  Object.values(ROUTINE).forEach(r => r.exercises.forEach(ex => { exInfo[ex.key] = ex; }));
+  const n = dayData.length;
+  let html = "";
+  ICON_GROUPS.forEach(g => {
+    html += `<div class="ex-group"><div class="ex-group-title">${g.icon} ${g.name}</div>`;
+    g.keys.forEach(key => {
+      const ex = exInfo[key];
+      if (!ex) return;
+      let total = 0, doneDays = 0, schedDays = 0;
+      const bars = dayData.map(x => {
+        const scheduled = ROUTINE[x.date.getDay()].exercises.some(e => e.key === key);
+        const isFuture = x.pct === undefined;
+        const val = Number((log[x.dateStr] || {})[key]) || 0;
+        total += val;
+        if (val > 0) doneDays++;
+        if (scheduled && !isFuture) schedDays++;
+        const title = `${x.date.getMonth() + 1}/${x.date.getDate()} · ${val}${ex.unit}`;
+        if (val > 0) {
+          const p = Math.min(val / ex.target, 1) * 100;
+          return `<div class="mini-bar" title="${title}" style="height:${Math.max(p, 6)}%; background:${pctColor(p)};"></div>`;
+        }
+        if (scheduled && !isFuture) return `<div class="mini-bar sched-empty" title="${title}"></div>`;
+        return `<div class="mini-bar"></div>`;
+      }).join("");
+      const goal = ex.target * schedDays;
+      const sub = goal
+        ? `${doneDays}일 수행 / 예정 ${schedDays}일 · 목표 ${goal.toLocaleString()}${ex.unit} 대비 <b style="color:${pctColor(Math.min(total / goal * 100, 100))};">${Math.round(total / goal * 100)}%</b>`
+        : `이번 달 아직 예정된 날이 없어요`;
+      html += `<div class="ex-stat">
+        <div class="ex-stat-head">
+          <span class="ex-stat-name">${ex.name}</span>
+          <span class="ex-stat-total">${total.toLocaleString()}<small>${ex.unit}</small></span>
+        </div>
+        <div class="ex-stat-sub">${sub}</div>
+        <div class="mini-bars">${bars}</div>
+        <div class="mini-axis"><span>1일</span><span>${Math.ceil(n / 2)}일</span><span>${n}일</span></div>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  el.innerHTML = html;
+}
+
 // ---------- 초기화 ----------
 logDateInput.value = fmt(todayStart());
+document.getElementById("icon-legend").innerHTML =
+  ICON_GROUPS.map(g => `<span>${g.icon} ${g.name}</span>`).join("") +
+  `<span style="opacity:.6;">(흐린 아이콘 = 그날 안 한 운동)</span>`;
+
+// 폰에서 앱을 며칠 열어둔 채로 다시 켜면 날짜가 옛날 날짜로 남아있는 문제 방지:
+// '오늘' 날짜를 보고 있었다면 날짜가 바뀌었을 때 자동으로 새 오늘로 이동
+let lastToday = fmt(todayStart());
+function checkDateRollover() {
+  const nowToday = fmt(todayStart());
+  if (nowToday === lastToday) return;
+  const wasViewingToday = logDateInput.value === lastToday;
+  lastToday = nowToday;
+  if (wasViewingToday && !logExerciseList.contains(document.activeElement)) {
+    logDateInput.value = nowToday;
+    renderLogForm();
+  }
+  currentWeekMonday = getMonday(todayStart());
+  currentMonth = new Date(todayStart().getFullYear(), todayStart().getMonth(), 1);
+  if (panels.week.style.display !== "none") renderWeek();
+  if (panels.month.style.display !== "none") renderMonth();
+}
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") checkDateRollover();
+  else flushPendingSaves();
+});
+window.addEventListener("pagehide", flushPendingSaves);
+setInterval(checkDateRollover, 60 * 1000);
 </script>
 </body>
 </html>
